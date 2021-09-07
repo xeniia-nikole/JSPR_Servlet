@@ -5,7 +5,7 @@ import ru.netology.model.Post;
 import ru.netology.repository.PostRepository;
 
 import java.util.List;
-import java.util.Map;
+//import java.util.Map;
 
 public class PostService {
   private final PostRepository repository;
@@ -30,5 +30,3 @@ public class PostService {
     repository.removeById(id);
   }
 }
-
-
