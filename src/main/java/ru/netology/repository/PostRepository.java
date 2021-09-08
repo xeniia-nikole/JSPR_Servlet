@@ -3,64 +3,49 @@ package ru.netology.repository;
 import ru.netology.model.Post;
 
 
-import java.util.List;
+import java.util.Map;
 import java.util.Optional;
-import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
 
 // Stub
 public class PostRepository {
 
-  final private List<Post> listPost = new CopyOnWriteArrayList<>();
+  final private Map<Integer, Post> mapPost = new ConcurrentHashMap<>();
+
   final private AtomicInteger ID = new AtomicInteger(0);
 
-
-  public List<Post> all() {
-    for (Post post : listPost) {
-      System.out.println("ID: " + post.getId() + ", CurrentContent:" + post.getContent());
-    }
-    return listPost;
+  public Map<Integer, Post> all() {
+    return mapPost;
   }
 
 
-  public Optional<Post> getById(long id) {
-    Post postCurrent = null;
-    for (Post post : listPost) {
-      if (post.getId() == id) {
-        postCurrent = post;
-      } else {
-        System.out.println("Нет такого ID!");
-      }
+  public Optional<Post> getById(int id) {
+    Optional<Post> currentPost = Optional.empty();
+    if (mapPost.containsKey(id)) {
+    currentPost = Optional.of(mapPost.get(id));
+    }else {
+      System.out.printf("Постов с ID %d не существует\n", ID.get());
     }
-    return Optional.ofNullable(postCurrent);
+    return currentPost;
   }
 
-  public Post save(Post post) {
-    if (post.getId() == 0) {
-      ID.getAndIncrement();
-      post.setId(ID.get());
-    } else {
-      for (Post currentPost : listPost) {
-        if (currentPost.getId() == post.getId()) {
-          currentPost.setContent(post.getContent());
-        } else {
-          ID.getAndIncrement();
-          System.out.println("Постов с таким ID не существует, новый ID: " + ID.get());
-          post.setId(ID.get());
-        }
-      }
+  public synchronized Post save(Post post) {
+    if (mapPost.containsKey(post.getID())) {
+      mapPost.put((int) post.getID(), post);
+    } else if (post.getID() == 0) {
+      long newId = ID.incrementAndGet();
+      mapPost.put((int) newId, post);
+      System.out.printf("Постов с ID %d не существует, добавлен новый пост.\n", ID.get());
     }
-    listPost.add(post);
     return post;
   }
 
-  public void removeById(long id) {
-    for (Post post : listPost) {
-      if (post.getId() == id) {
-        listPost.remove(post);
-      } else {
-        System.out.println("Нет такого ID!");
-      }
+  public void removeById(int id) {
+    if (mapPost.containsKey(id)){
+    mapPost.remove(id);
+    }else {
+        System.out.printf("Постов с ID %d не существует\n", ID.get());
     }
   }
 }

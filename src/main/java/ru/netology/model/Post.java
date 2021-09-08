@@ -1,22 +1,22 @@
 package ru.netology.model;
 
 public class Post {
-  private long id;
+  private int id;
   private String content;
 
   public Post() {
   }
 
-  public Post(long id, String content) {
+  public Post(int id, String content) {
     this.id = id;
     this.content = content;
   }
 
-  public long getId() {
+  public int getID() {
     return id;
   }
 
-  public void setId(long id) {
+  public void setID(int id) {
     this.id = id;
   }
 

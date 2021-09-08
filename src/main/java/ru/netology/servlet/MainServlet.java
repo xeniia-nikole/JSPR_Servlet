@@ -59,7 +59,6 @@ public class MainServlet extends HttpServlet {
     }
   }
 
-
   @Override
   public void doDelete(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
     try {
